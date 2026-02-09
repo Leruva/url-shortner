@@ -39,8 +39,27 @@ const createShortUrl = asyncHandler(async (req, res) => {
     res.status(201).json(savedUrl);
         
 });
-//Retrieve Original URL
+//Redirect Original URL
 //GET /shorten/abc123
+const redirectOriginalUrl = asyncHandler(async (req,res) =>{
+    const { shortCode } = req.params;
+    if(!shortCode){
+        res.status(400);
+        throw new Error("Short code is required");
+    }
+    const urlData = await Url.findOneAndUpdate({shortCode}, {$inc : {accessCount: 1}}, {new: true});
+    
+    if(!urlData) {
+        res.status(404);
+        throw new Error("Short Url not found");
+    }
+    // console.log(urlData.originalUrl);
+    res.redirect(urlData.originalUrl);
+    //res.status(200).json(urlData);
+});
+//Retrieve Original URL
+//GET /shorten/info/abc123
+
 const retriveOriginalUrl = asyncHandler(async (req,res) =>{
     const { shortCode } = req.params;
     if(!shortCode){
@@ -48,12 +67,11 @@ const retriveOriginalUrl = asyncHandler(async (req,res) =>{
         throw new Error("Short code is required");
     }
     const urlData = await Url.findOne({shortCode});
-    
+
     if(!urlData) {
         res.status(404);
         throw new Error("Short Url not found");
-    }
-
+    }  
     res.status(200).json(urlData);
 });
 //Update Short URL
@@ -98,6 +116,7 @@ const deleteShortUrl = asyncHandler(async (req,res)=>{
     }
     res.status(200).json({ message: "Short URL deleted successfully" });
 });
+
 //Get URL Statistics
 //GET /shorten/abc123/stats
 // const urlStats = 
@@ -106,6 +125,7 @@ const deleteShortUrl = asyncHandler(async (req,res)=>{
 module.exports = {
     createShortUrl,
     updateShortUrl,
+    redirectOriginalUrl,
     retriveOriginalUrl,
     deleteShortUrl
 }
