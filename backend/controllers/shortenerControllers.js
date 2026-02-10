@@ -12,6 +12,13 @@ const createShortUrl = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error("Invalid URL");
     }
+    if (!originalUrl.startsWith("http://")&& !originalUrl.startsWith("https://")){
+        originalUrl = "http://" + originalUrl;
+    }  
+    const existingUrl = await Url.findOne({ originalUrl });
+    if(existingUrl){
+        return res.status(200).json(existingUrl);
+    }
     let savedUrl;
     let attempts = 0;
     while(!attempts < 5 && !savedUrl){
