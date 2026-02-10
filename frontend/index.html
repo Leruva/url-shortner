@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>URL Shortener</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -11,15 +11,30 @@
   <div class="container">
     <h1>URL Shortener</h1>
 
-    <input 
-      type="text" 
-      id="longUrl" 
-      placeholder="Enter long URL here..."
-    />
+    <!-- Create -->
+    <div class="section">
+      <input id="longUrl" type="text" placeholder="Enter long URL" />
+      <button id="shortenBtn" onclick="shortenUrl()">Shorten</button>
 
-    <button onclick="shortenUrl()">Shorten</button>
+      <div id="result"></div>
+    </div>
 
-    <div id="result"></div>
+    <!-- Update -->
+    <div class="section">
+      <h3>Update URL</h3>
+      <input id="updateCode" type="text" placeholder="Short code" />
+      <input id="updateUrl" type="text" placeholder="New original URL" />
+      <button id="updateBtn" onclick="updateUrl()">Update</button>
+      <div id="updateResult"></div>
+    </div>
+
+    <!-- Delete -->
+    <div class="section">
+      <h3>Delete URL</h3>
+      <input id="deleteCode" type="text" placeholder="Short code" />
+      <button id="deleteBtn" class="danger" onclick="deleteUrl()">Delete</button>
+      <div id="deleteResult"></div>
+    </div>
   </div>
 
   <script src="script.js"></script>
