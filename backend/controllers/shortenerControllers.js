@@ -7,7 +7,7 @@ const validateUrl = require('../utils/validateUrl');
 //Create Short URL
 //POST /shorten
 const createShortUrl = asyncHandler(async (req, res) => {
-    const { originalUrl } =  req.body;
+    let { originalUrl } =  req.body;
     if(validateUrl(originalUrl) === false){
         res.status(400);
         throw new Error("Invalid URL");
@@ -85,25 +85,38 @@ const retriveOriginalUrl = asyncHandler(async (req,res) =>{
 //PUT /shorten/abc123
 const updateShortUrl = asyncHandler(async (req,res)=>{
     const { shortCode} = req.params;
-    const { originalUrl } = req.body;
+    let { originalUrl } = req.body;
 
     if(!shortCode){
         res.status(400);
         throw new Error("Short code is Required");
     }
-
+    
     if(validateUrl(originalUrl) === false){
         res.status(400);
         throw new Error("Invalid URL");
     }
-
-    const updatedUrl = await Url.findOneAndUpdate({shortCode}, { originalUrl }, { new: true });
-
-    if(!updatedUrl){
-        res.status(404);
-        throw new Error("Short Url not found");
+    if (!originalUrl.startsWith("http://") && !originalUrl.startsWith("https://")) {
+        originalUrl = "https://" + originalUrl;
     }
-    res.status(200).json(updatedUrl);
+    const url = await Url.findOne({ shortCode });
+    if (!url) {
+        res.status(404);
+        throw new Error("Short URL not found");
+    }
+
+    // Prevent duplicate originalUrl for DIFFERENT shortCode
+    const duplicate = await Url.findOne({ originalUrl });
+    if (duplicate && duplicate.shortCode !== shortCode) {
+        res.status(409);
+        throw new Error("This URL already has a short code");
+    }
+
+    // Update
+    url.originalUrl = originalUrl;
+    await url.save();
+
+    res.status(200).json(url);
 });
 //Delete Short URL
 //DELETE /shorten/abc123
