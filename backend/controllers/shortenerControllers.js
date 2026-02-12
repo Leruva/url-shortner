@@ -61,6 +61,7 @@ const redirectOriginalUrl = asyncHandler(async (req,res) =>{
         throw new Error("Short Url not found");
     }
     // console.log(urlData.originalUrl);
+    console.log(urlData.originalUrl);
     res.redirect(urlData.originalUrl);
     //res.status(200).json(urlData);
 });

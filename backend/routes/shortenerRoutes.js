@@ -6,8 +6,9 @@ const router = express.Router();
 //post
 router.post("/", createShortUrl );
 //get
-router.get("/info/:shortCode", retriveOriginalUrl );
 router.get("/:shortCode", redirectOriginalUrl );
+router.get("/info/:shortCode", retriveOriginalUrl );
+
 //put
 router.put("/:shortCode", updateShortUrl);
 //delete
